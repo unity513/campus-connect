@@ -8,8 +8,7 @@ sqlparse==0.6.0
 # Required when SAVANA_DATABASE_URL / DATABASE_URL or SAVANA_POSTGRES_* is set
 # (e.g. a hosted Supabase Postgres database). Leave installed; it is a no-op
 # when running on the SQLite default.
-psycopg[binary]>=3.2.10,<3.4
-# Production extras (uncomment as needed for your deployment target)
+psycopg[binary]==3.2.3# Production extras (uncomment as needed for your deployment target)
 # gunicorn==23.0.0            # WSGI app server
 # whitenoise==6.8.2           # static file serving behind gunicorn
 # django-redis==5.4.0         # cache / rate-limit backend at scale
