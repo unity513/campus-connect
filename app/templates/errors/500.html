@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Something went wrong{% endblock %}
+{% block content %}<section class="max-w-xl mx-auto px-5 py-24 text-center"><p class="editorial text-5xl mb-3">500</p><h1 class="editorial text-2xl mb-3">Something went wrong</h1><p class="text-[#636b61] mb-6">We hit an unexpected error. Please try again shortly.</p><a href="{% url 'storefront:home' %}" class="btn-primary rounded-full px-6 py-3 font-semibold">Back to home</a></section>{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Checkout — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-5xl mx-auto px-5 md:px-10 py-12 md:py-16">
+  <h1 class="editorial text-3xl md:text-4xl mb-8">Checkout</h1>
+  <form method="post" class="grid lg:grid-cols-[1fr_360px] gap-10">
+    {% csrf_token %}
+    <div class="space-y-8">
+      <div>
+        <h2 class="font-bold mb-3">Contact details</h2>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <input name="contact_name" placeholder="Full name" value="{{ user.get_full_name }}" required class="rounded-xl border border-[#bfc6b9] px-4 py-3">
+          <input name="contact_email" type="email" placeholder="Email" value="{{ user.email }}" class="rounded-xl border border-[#bfc6b9] px-4 py-3">
+          <input name="contact_phone" placeholder="Phone" class="rounded-xl border border-[#bfc6b9] px-4 py-3 sm:col-span-2">
+        </div>
+      </div>
+
+      <div>
+        <h2 class="font-bold mb-3">Fulfilment</h2>
+        <div class="space-y-2">
+          {% for fm in fulfilment_methods %}
+          <label class="flex items-center gap-3 rounded-xl border border-[#cfd3c6] px-4 py-3">
+            <input type="radio" name="fulfilment_method" value="{{ fm.id }}" data-kind="{{ fm.kind }}" {% if forloop.first %}checked{% endif %} required>
+            <span class="flex-1">{{ fm.name }} <span class="text-sm text-[#636b61]">({{ fm.get_kind_display }})</span></span>
+            <span class="text-sm">{% if fm.fee %}MWK {{ fm.fee|floatformat:0 }}{% else %}Free{% endif %}</span>
+          </label>
+          {% empty %}<p class="text-sm text-[#636b61]">No fulfilment methods configured.</p>{% endfor %}
+        </div>
+
+        <div id="pickup-block" class="mt-3 hidden">
+          <label class="text-sm font-semibold">Pickup location</label>
+          <select name="pickup_location" class="w-full rounded-xl border border-[#bfc6b9] px-4 py-3 mt-1">
+            {% for loc in pickup_locations %}<option value="{{ loc.id }}">{{ loc.name }} — {{ loc.address }}</option>{% endfor %}
+          </select>
+        </div>
+        <div id="delivery-block" class="mt-3 hidden grid gap-3">
+          <input name="recipient" placeholder="Recipient name" class="rounded-xl border border-[#bfc6b9] px-4 py-3">
+          <input name="delivery_phone" placeholder="Delivery phone" class="rounded-xl border border-[#bfc6b9] px-4 py-3">
+          <input name="line1" placeholder="Address" class="rounded-xl border border-[#bfc6b9] px-4 py-3">
+          <div class="grid grid-cols-2 gap-3">
+            <input name="city" placeholder="City" class="rounded-xl border border-[#bfc6b9] px-4 py-3">
+            <input name="area" placeholder="Area" class="rounded-xl border border-[#bfc6b9] px-4 py-3">
+          </div>
+          <input name="delivery_notes" placeholder="Delivery notes (optional)" class="rounded-xl border border-[#bfc6b9] px-4 py-3">
+        </div>
+      </div>
+
+      <div>
+        <h2 class="font-bold mb-3">Payment method</h2>
+        <div class="space-y-2">
+          {% for pm in payment_methods %}
+          <label class="flex items-center gap-3 rounded-xl border border-[#cfd3c6] px-4 py-3">
+            <input type="radio" name="payment_method" value="{{ pm.id }}" {% if forloop.first %}checked{% endif %} required>
+            <span>{{ pm.name }}</span>
+          </label>
+          {% empty %}<p class="text-sm text-[#636b61]">No payment methods configured.</p>{% endfor %}
+        </div>
+        <p class="text-sm text-[#636b61] mt-2">You will receive payment instructions after submitting your order.</p>
+      </div>
+    </div>
+
+    <aside class="bg-[#f4f2eb] rounded-2xl p-6 h-fit">
+      <h2 class="font-bold mb-4">Order summary</h2>
+      <div class="space-y-3 text-sm">
+        {% for row in rows %}
+        <div class="flex justify-between gap-2"><span>{{ row.quantity }} × {{ row.product.name }}</span><span>MWK {{ row.line_total|floatformat:0 }}</span></div>
+        {% endfor %}
+      </div>
+      <div class="border-t border-[#deded3] mt-4 pt-4 flex justify-between font-bold"><span>Subtotal</span><span>MWK {{ subtotal|floatformat:0 }}</span></div>
+      <p class="text-xs text-[#636b61] mt-1">Delivery fee (if any) is added based on your choice.</p>
+      <button class="btn-primary w-full rounded-full py-4 font-semibold mt-6">Submit order</button>
+    </aside>
+  </form>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+(function(){
+  var radios=document.querySelectorAll('input[name=fulfilment_method]');
+  var pickup=document.getElementById('pickup-block');
+  var delivery=document.getElementById('delivery-block');
+  function sync(){
+    var sel=document.querySelector('input[name=fulfilment_method]:checked');
+    var kind=sel?sel.getAttribute('data-kind'):'';
+    pickup.classList.toggle('hidden',kind!=='pickup');
+    delivery.classList.toggle('hidden',kind!=='delivery');
+  }
+  radios.forEach(function(r){r.addEventListener('change',sync);});
+  sync();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Inventory — Back office{% endblock %}
+{% block content %}
+<section class="max-w-7xl mx-auto px-5 md:px-10 py-10">
+  <h1 class="editorial text-3xl mb-6">Inventory</h1>
+  {% include 'backoffice/_nav.html' %}
+  <div class="overflow-x-auto mb-10">
+    <table class="w-full text-sm">
+      <thead class="text-left text-[#636b61] border-b border-[#deded3]"><tr><th class="py-2">Product</th><th>SKU</th><th>Stock</th><th>Threshold</th><th>Adjust</th></tr></thead>
+      <tbody>
+        {% for p in products %}
+        <tr class="border-b border-[#eceee6]">
+          <td class="py-3">{{ p.name }}</td>
+          <td>{{ p.sku }}</td>
+          <td class="{% if p.stock_quantity == 0 %}text-[#9a5a4e]{% elif p.is_low_stock %}text-[#6b5a1f]{% endif %} font-semibold">{{ p.stock_quantity }}</td>
+          <td>{{ p.low_stock_threshold }}</td>
+          <td>
+            <form method="post" action="{% url 'backoffice:inventory_adjust' %}" class="flex items-center gap-1">
+              {% csrf_token %}<input type="hidden" name="product_id" value="{{ p.id }}">
+              <select name="mode" class="rounded-lg border border-[#bfc6b9] px-2 py-1"><option value="increase">+ Add</option><option value="decrease">− Remove</option><option value="set">= Set</option></select>
+              <input name="amount" type="number" value="1" class="w-16 rounded-lg border border-[#bfc6b9] px-2 py-1">
+              <input name="note" placeholder="note" class="w-28 rounded-lg border border-[#bfc6b9] px-2 py-1">
+              <button class="btn-primary rounded-lg px-3 py-1 font-semibold">Apply</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}<tr><td colspan="5" class="py-10 text-center text-[#636b61]">No products yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="font-bold mb-3">Recent inventory movements</h2>
+  <div class="space-y-2">
+    {% for m in movements %}
+    <div class="flex justify-between gap-2 bg-[#f4f2eb] rounded-xl px-4 py-2 text-sm">
+      <span>{{ m.product.name }}</span>
+      <span class="{% if m.quantity_delta < 0 %}text-[#9a5a4e]{% else %}text-[#406149]{% endif %}">{{ m.quantity_delta }}</span>
+      <span>→ {{ m.resulting_quantity }}</span>
+      <span class="text-[#636b61]">{{ m.get_reason_display }}{% if m.created_by %} by {{ m.created_by }}{% endif %}</span>
+      <span class="text-[#636b61]">{{ m.created_at|date:'j M H:i' }}</span>
+    </div>
+    {% empty %}<p class="text-[#636b61] text-sm">No movements yet.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

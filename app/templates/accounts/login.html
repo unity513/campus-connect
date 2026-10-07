@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Sign in — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-md mx-auto px-5 py-16">
+  <h1 class="editorial text-3xl mb-6">Sign in</h1>
+  {% if form.errors %}<div class="rounded-xl bg-[#f6e3e0] text-[#7a2b22] px-4 py-3 text-sm mb-4">Invalid username or password.</div>{% endif %}
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    <div><label class="text-sm font-semibold">Username</label>{{ form.username }}</div>
+    <div><label class="text-sm font-semibold">Password</label>{{ form.password }}</div>
+    <button class="btn-primary w-full rounded-full py-3 font-semibold">Sign in</button>
+  </form>
+  <p class="text-sm text-[#636b61] mt-4">New here? <a href="{% url 'accounts:register' %}" class="underline underline-offset-4 font-semibold">Create an account</a></p>
+</section>
+{% endblock %}
+{% block scripts %}<style>input[type=text],input[type=password]{width:100%;border:1px solid #bfc6b9;border-radius:12px;padding:12px 16px;margin-top:4px}</style>{% endblock %}

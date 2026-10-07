@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Connect — How it works</title>
+<style>
+:root{--bg:#0f1613;--panel:#16211c;--card:#1c2a23;--ink:#eef3ed;--mut:#9fb0a4;--line:#2c3d33;--acc:#5fcf8a;--acc2:#8bd0ff;--warn:#ffcf6b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+a{color:var(--acc2);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{display:flex;min-height:100vh}
+nav.side{width:260px;flex:0 0 260px;background:var(--panel);border-right:1px solid var(--line);padding:22px 18px;position:sticky;top:0;height:100vh;overflow:auto}
+nav.side h1{font-size:19px;margin:0 0 2px}
+nav.side .pw{color:var(--mut);font-size:12px;letter-spacing:.5px;margin-bottom:18px}
+nav.side a{display:block;color:var(--mut);padding:7px 10px;border-radius:8px;font-size:14px}
+nav.side a:hover{background:var(--card);color:var(--ink);text-decoration:none}
+nav.side .grp{color:#6f8277;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin:16px 0 4px 10px}
+main{flex:1;padding:40px 48px;max-width:960px}
+section{margin-bottom:52px;scroll-margin-top:20px}
+h2{font-size:26px;margin:0 0 6px;border-bottom:1px solid var(--line);padding-bottom:10px}
+h3{font-size:17px;margin:26px 0 8px;color:var(--acc)}
+p{color:#d6e0d8}
+.lead{color:var(--mut);font-size:15px}
+code{background:#0a0f0d;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:#cfe9d6}
+pre{background:#0a0f0d;border:1px solid var(--line);border-radius:10px;padding:16px;overflow:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:#cfe9d6}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card h4{margin:0 0 6px;font-size:15px}
+.card p{margin:0;font-size:13px;color:var(--mut)}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--acc);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+td code{white-space:nowrap}
+.pill{display:inline-block;background:#0a0f0d;border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--mut);margin:2px 4px 2px 0}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px}
+.step.ok{border-color:var(--acc);color:var(--acc)}
+.step.bad{border-color:#e07a7a;color:#e8a0a0}
+.arrow{color:var(--mut)}
+.note{background:#14241b;border-left:3px solid var(--acc);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:14px}
+.note.warn{background:#241f14;border-left-color:var(--warn)}
+.badge{font-size:11px;padding:2px 8px;border-radius:6px;background:#0a0f0d;border:1px solid var(--line);color:var(--mut);margin-left:8px}
+footer{color:#6f8277;font-size:12px;border-top:1px solid var(--line);padding-top:16px;margin-top:30px}
+@media(max-width:820px){.wrap{flex-direction:column}nav.side{width:100%;height:auto;position:static;flex:none}main{padding:24px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="side">
+<h1>Campus Connect</h1>
+<div class="pw">POWERED BY LAVIDA</div>
+<div class="grp">Start here</div>
+<a href="#overview">Overview</a>
+<a href="#run">Run it locally</a>
+<a href="#supabase">Use Supabase</a>
+<div class="grp">How it works</div>
+<a href="#map">Site map &amp; routes</a>
+<a href="#customer">Customer journey</a>
+<a href="#lifecycle">Order lifecycle</a>
+<a href="#backoffice">Back office</a>
+<a href="#roles">Roles &amp; access</a>
+<a href="#security">Security rules</a>
+<a href="#structure">Project structure</a>
+</nav>
+<main>
+<section id="overview">
+<h2>Overview</h2>
+<p class="lead">Campus Connect is a real, database-backed Django e-commerce platform — a customer storefront plus a complete staff back office. Nothing here is a mockup: products, payment methods, prices, pickup points and store info all live in the database and are editable by staff.</p>
+<div class="grid">
+<div class="card"><h4>🛒 Storefront</h4><p>Browse products, add to cart, check out, upload payment proof, and track orders.</p></div>
+<div class="card"><h4>🧾 Order workflow</h4><p>Numbered <code>CC-000001</code> orders with a full status lifecycle and audit history.</p></div>
+<div class="card"><h4>🔐 Human payment check</h4><p>A staff member must verify an uploaded proof — orders are never auto-marked paid.</p></div>
+<div class="card"><h4>📦 Inventory</h4><p>Stock is committed on payment confirmation; selling out flips products to Out of Stock.</p></div>
+<div class="card"><h4>👥 RBAC</h4><p>Five staff roles with permissions enforced server-side, not just hidden in the UI.</p></div>
+<div class="card"><h4>⚖️ Regulated items</h4><p>Age-restricted products stay un-buyable until a compliance record is approved.</p></div>
+</div>
+</section>
+
+<section id="run">
+<h2>Run it locally</h2>
+<p class="lead">You need Python 3.12+ and the files from the delivered zip. By default it runs on zero-config SQLite — no database server needed.</p>
+<pre>unzip campus-connect-ecommerce.zip
+cd savana
+pip install -r requirements.txt
+python manage.py migrate
+
+# create the first admin + seed a demo catalogue
+export SAVANA_ADMIN_USER=admin
+export SAVANA_ADMIN_EMAIL=you@example.com
+export SAVANA_ADMIN_PASSWORD='choose-a-strong-password'
+python manage.py savana_setup --demo
+
+python manage.py runserver</pre>
+<p>Then open the pages below in a browser:</p>
+<div class="grid">
+<div class="card"><h4>Storefront</h4><p><code>http://127.0.0.1:8000/</code></p></div>
+<div class="card"><h4>Staff back office</h4><p><code>http://127.0.0.1:8000/backoffice/</code></p></div>
+<div class="card"><h4>Django admin</h4><p><code>http://127.0.0.1:8000/admin/</code></p></div>
+</div>
+<div class="note">The folder is named <code>savana</code> and the setup command is <code>savana_setup</code> — these are internal names only. Everything a customer sees reads “Campus Connect”.</div>
+</section>
+
+<section id="supabase">
+<h2>Use Supabase <span class="badge">hosted Postgres</span></h2>
+<p class="lead">To store data in Supabase instead of SQLite, give the app one connection string. The database is resolved in this order: <code>SAVANA_DATABASE_URL</code> (or <code>DATABASE_URL</code>) → discrete <code>SAVANA_POSTGRES_*</code> vars → SQLite.</p>
+<h3>1. Get the connection string</h3>
+<p>In Supabase: <strong>Project Settings → Database → Connection string → URI</strong>. Use the connection <em>pooler</em> host (port <code>6543</code>) for most deployments, or the direct host (port <code>5432</code>).</p>
+<h3>2. Point the app at it</h3>
+<pre>export SAVANA_DATABASE_URL='postgresql://postgres.&lt;ref&gt;:&lt;password&gt;@aws-0-&lt;region&gt;.pooler.supabase.com:6543/postgres'
+pip install -r requirements.txt      # installs the psycopg driver
+python manage.py migrate
+python manage.py savana_setup --demo</pre>
+<div class="note">SSL is required by Supabase and turned on automatically (<code>sslmode=require</code>). Override with <code>SAVANA_DB_SSLMODE</code> if needed. Special characters in the password can be percent-encoded in the URL — they are decoded correctly.</div>
+</section>
+
+<section id="map">
+<h2>Site map &amp; routes</h2>
+<p class="lead">Every URL the app serves, grouped by area. <code>&lt;slug&gt;</code> / <code>&lt;number&gt;</code> are placeholders filled in at runtime.</p>
+<h3>Storefront <span class="badge">public</span></h3>
+<table>
+<tr><th>URL</th><th>What it does</th></tr>
+<tr><td><code>/</code></td><td>Home page</td></tr>
+<tr><td><code>/shop/</code></td><td>Product catalogue listing</td></tr>
+<tr><td><code>/product/&lt;slug&gt;/</code></td><td>Single product detail page</td></tr>
+<tr><td><code>/cart/</code></td><td>Shopping cart (add / update via cart actions)</td></tr>
+<tr><td><code>/about/</code> &middot; <code>/support/</code></td><td>About and support/help pages</td></tr>
+<tr><td><code>/sitemap.xml</code> &middot; <code>/robots.txt</code></td><td>SEO endpoints</td></tr>
+</table>
+<h3>Orders <span class="badge">checkout &amp; tracking</span></h3>
+<table>
+<tr><th>URL</th><th>What it does</th></tr>
+<tr><td><code>/orders/checkout/</code></td><td>Place an order from the cart</td></tr>
+<tr><td><code>/orders/&lt;number&gt;/instructions/</code></td><td>Payment instructions for an order</td></tr>
+<tr><td><code>/orders/&lt;number&gt;/proof/</code></td><td>Upload a payment proof (screenshot/slip)</td></tr>
+<tr><td><code>/orders/&lt;number&gt;/track/</code> &middot; <code>/orders/track/</code></td><td>Track one order / look up by number</td></tr>
+<tr><td><code>/orders/proof/&lt;id&gt;/file/</code></td><td>Private proof file — access-controlled (403 for the public)</td></tr>
+</table>
+<h3>Accounts</h3>
+<table>
+<tr><th>URL</th><th>What it does</th></tr>
+<tr><td><code>/accounts/register/</code> &middot; <code>/accounts/login/</code> &middot; <code>/accounts/logout/</code></td><td>Customer auth</td></tr>
+<tr><td><code>/accounts/dashboard/</code> &middot; <code>/accounts/profile/</code></td><td>Customer dashboard &amp; profile</td></tr>
+</table>
+<h3>Back office <span class="badge">staff, login required</span></h3>
+<table>
+<tr><th>URL</th><th>What it does</th></tr>
+<tr><td><code>/backoffice/</code></td><td>Operations dashboard</td></tr>
+<tr><td><code>/backoffice/orders/</code> &middot; <code>/backoffice/orders/&lt;number&gt;/</code></td><td>Order queue &amp; detail</td></tr>
+<tr><td><code>/backoffice/orders/&lt;number&gt;/action/</code></td><td>Verify / reject / advance an order (permission-checked)</td></tr>
+<tr><td><code>/backoffice/inventory/</code> &middot; <code>/backoffice/inventory/adjust/</code></td><td>Stock view &amp; adjustments</td></tr>
+<tr><td><code>/backoffice/audit/</code></td><td>Audit log of staff actions</td></tr>
+<tr><td><code>/admin/</code></td><td>Full Django admin (data management)</td></tr>
+</table>
+</section>
+
+<section id="customer">
+<h2>Customer journey</h2>
+<p class="lead">The path a shopper takes from browsing to a completed order.</p>
+<div class="flow">
+<span class="step">Browse shop</span><span class="arrow">→</span>
+<span class="step">Add to cart</span><span class="arrow">→</span>
+<span class="step">Checkout</span><span class="arrow">→</span>
+<span class="step">Get CC- number + pay instructions</span><span class="arrow">→</span>
+<span class="step">Upload payment proof</span><span class="arrow">→</span>
+<span class="step">Wait for staff verification</span><span class="arrow">→</span>
+<span class="step ok">Order confirmed &amp; fulfilled</span>
+</div>
+<p>Checkout validates stock (you cannot over-order), creates an order with a unique <code>CC-000001</code> style number, and shows the payment methods and instructions pulled from the database. The customer uploads proof, then a human on staff must verify it before anything is marked paid.</p>
+</section>
+
+<section id="lifecycle">
+<h2>Order lifecycle</h2>
+<p class="lead">Every order moves through these statuses. Each change is recorded with who did it and when.</p>
+<div class="flow">
+<span class="step">Submitted</span><span class="arrow">→</span>
+<span class="step">Payment Pending</span><span class="arrow">→</span>
+<span class="step">Payment Proof Uploaded</span><span class="arrow">→</span>
+<span class="step">Payment Verification</span><span class="arrow">→</span>
+<span class="step ok">Payment Confirmed</span><span class="arrow">→</span>
+<span class="step">Processing</span><span class="arrow">→</span>
+<span class="step">Ready for Fulfilment</span><span class="arrow">→</span>
+<span class="step ok">Fulfilled</span>
+</div>
+<h3>Branch / exception states</h3>
+<div class="flow">
+<span class="step bad">Cancelled</span>
+<span class="step bad">Rejected</span>
+<span class="step bad">Payment Failed</span>
+<span class="step bad">Out of Stock</span>
+</div>
+<div class="note">Stock is committed when a verifier <strong>confirms</strong> payment, so inventory only drops for genuinely paid orders. If a product's stock hits zero it automatically flips to <em>Out of Stock</em>, and restocking flips it back to <em>Published</em>.</div>
+</section>
+
+<section id="backoffice">
+<h2>Back office</h2>
+<p class="lead">Where staff run the store. Every action is permission-checked on the server and written to the audit log.</p>
+<div class="grid">
+<div class="card"><h4>Dashboard</h4><p>Live operational snapshot of orders needing attention.</p></div>
+<div class="card"><h4>Order queue &amp; detail</h4><p>Open an order, see its proof and history, and take the next action.</p></div>
+<div class="card"><h4>Verify / reject payment</h4><p>Only a Payment Verifier can confirm or reject — rejection records a reason.</p></div>
+<div class="card"><h4>Advance fulfilment</h4><p>Move confirmed orders through Processing → Ready → Fulfilled.</p></div>
+<div class="card"><h4>Inventory</h4><p>View stock and make adjustments; movements are tracked.</p></div>
+<div class="card"><h4>Audit log</h4><p>Who did what, when — e.g. payment rejections are logged.</p></div>
+</div>
+</section>
+
+<section id="roles">
+<h2>Roles &amp; access</h2>
+<p class="lead">Five staff roles seeded at setup. Permissions are attached to Django groups and enforced server-side.</p>
+<table>
+<tr><th>Role</th><th>Can do</th></tr>
+<tr><td><strong>Super Admin</strong></td><td>Full access to everything.</td></tr>
+<tr><td><strong>Store Admin</strong></td><td>Products, inventory, orders and customers.</td></tr>
+<tr><td><strong>Payment Verifier</strong></td><td>Payment info plus the <code>verify_payment</code> / <code>reject_payment</code> actions.</td></tr>
+<tr><td><strong>Fulfilment Staff</strong></td><td>Order processing only (<code>update_fulfilment</code>) — cannot verify payments.</td></tr>
+<tr><td><strong>Content Manager</strong></td><td>Products &amp; storefront content, no financial admin.</td></tr>
+</table>
+</section>
+
+<section id="security">
+<h2>Security rules</h2>
+<div class="note warn"><strong>No auto-paid orders.</strong> Uploading a screenshot never marks an order paid — a human verifier must explicitly confirm it.</div>
+<div class="note warn"><strong>RBAC is server-side.</strong> Permissions are enforced in the backend, not merely hidden in the UI, so a hidden button can't be bypassed by crafting a request.</div>
+<div class="note warn"><strong>Private payment proofs.</strong> Proof files are stored outside the public media path; anonymous requests get a <code>403</code>, and only authorised staff can open them.</div>
+<div class="note warn"><strong>Nothing sensitive is hard-coded.</strong> Account numbers, payment instructions, pickup locations and store info live in the database; secrets and admin credentials come from environment variables.</div>
+<div class="note warn"><strong>Regulated products are gated.</strong> Age-restricted items can't be transacted until an approved compliance record exists.</div>
+</section>
+
+<section id="structure">
+<h2>Project structure</h2>
+<p class="lead">Django apps, each owning one concern.</p>
+<table>
+<tr><th>App</th><th>Responsibility</th></tr>
+<tr><td><code>config</code></td><td>Settings (incl. Supabase DB resolution), root URLs, WSGI/ASGI.</td></tr>
+<tr><td><code>storefront</code></td><td>Public pages: home, shop, product, cart, about, support, SEO.</td></tr>
+<tr><td><code>catalog</code></td><td>Products, categories, images, inventory movements, compliance.</td></tr>
+<tr><td><code>orders</code></td><td>Orders, items, payments, proofs, status events (<code>CC-</code> numbering).</td></tr>
+<tr><td><code>accounts</code></td><td>Custom user, customer profiles, auth, roles/RBAC definitions.</td></tr>
+<tr><td><code>backoffice</code></td><td>Staff dashboard, order actions, inventory, audit log.</td></tr>
+<tr><td><code>store</code></td><td>Store settings, payment/fulfilment methods, merchant &amp; pickup, notifications.</td></tr>
+</table>
+<div class="note">First-run seeding (<code>savana_setup --demo</code>) creates the roles, the first Super Admin, store/payment/merchant settings, notification email templates, and a small demo catalogue.</div>
+</section>
+
+<footer>Campus Connect e-commerce platform — Powered by LAVIDA. This page is a static guide; start the server to use the live site.</footer>
+</main>
+</div>
+</body>
+</html>

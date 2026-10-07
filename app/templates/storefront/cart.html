@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Cart — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-5xl mx-auto px-5 md:px-10 py-12 md:py-16">
+  <h1 class="editorial text-3xl md:text-4xl mb-8">Your cart</h1>
+
+  {% if rows %}
+    {% if problems %}
+      <div class="rounded-xl bg-[#f6e3e0] text-[#7a2b22] px-4 py-3 text-sm mb-6">
+        {% for p in problems %}<p>{{ p }}</p>{% endfor %}
+      </div>
+    {% endif %}
+    <div class="space-y-4">
+      {% for row in rows %}
+      <div class="flex items-center gap-4 bg-[#f4f2eb] rounded-2xl p-4">
+        {% with img=row.product.primary_image %}{% if img %}<img class="photo w-20 h-20 rounded-xl" src="{{ img }}" alt="{{ row.product.name }}">{% endif %}{% endwith %}
+        <div class="flex-1">
+          <a href="{% url 'storefront:product' row.product.slug %}" class="font-semibold">{{ row.product.name }}</a>
+          <p class="text-sm text-[#636b61]">{{ row.product.currency }} {{ row.unit_price|floatformat:0 }} each</p>
+        </div>
+        <form method="post" action="{% url 'storefront:cart_update' %}" class="flex items-center gap-2">
+          {% csrf_token %}
+          <input type="hidden" name="product_id" value="{{ row.product.id }}">
+          <input type="number" name="quantity" value="{{ row.quantity }}" min="1" max="{{ row.product.stock_quantity }}" class="w-16 rounded-lg border border-[#bfc6b9] px-2 py-2">
+          <button name="action" value="update" class="text-sm underline underline-offset-4">Update</button>
+          <button name="action" value="remove" class="text-sm text-[#9a5a4e] ml-2" aria-label="Remove"><i data-lucide="trash-2" class="w-4"></i></button>
+        </form>
+        <div class="w-28 text-right font-semibold">{{ row.product.currency }} {{ row.line_total|floatformat:0 }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="mt-8 flex flex-col items-end gap-2">
+      <p class="text-lg">Subtotal: <span class="font-bold">MWK {{ subtotal|floatformat:0 }}</span></p>
+      <p class="text-sm text-[#636b61]">Delivery or pickup options and fees are chosen at checkout.</p>
+      {% if not problems %}
+      <a href="{% url 'orders:checkout' %}" class="btn-primary rounded-full px-8 py-4 font-semibold mt-2">Proceed to order</a>
+      {% else %}
+      <span class="rounded-full px-8 py-4 font-semibold mt-2 bg-[#dfe0d7] text-[#8a8f85]">Resolve stock issues to continue</span>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="py-20 text-center text-[#636b61]">
+      <i data-lucide="shopping-bag" class="mx-auto mb-3"></i>
+      <p>Your cart is empty.</p>
+      <a href="{% url 'storefront:shop' %}" class="inline-block mt-4 btn-primary rounded-full px-7 py-3 font-semibold">Browse products</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
