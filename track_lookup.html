@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Track an order — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-xl mx-auto px-5 md:px-10 py-16">
+  <h1 class="editorial text-3xl md:text-4xl mb-6">Track an order</h1>
+  <form method="get" class="flex gap-3">
+    <input name="number" placeholder="CC-000001" class="flex-1 rounded-xl border border-[#bfc6b9] bg-white px-4 py-3" required>
+    <button class="btn-primary rounded-xl px-6 py-3 font-semibold">Track</button>
+  </form>
+  <p class="text-sm text-[#636b61] mt-3">Enter the order number you received when you placed your order.</p>
+</section>
+{% endblock %}

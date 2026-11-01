@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}My account — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-5xl mx-auto px-5 md:px-10 py-12 md:py-16">
+  <div class="flex items-center justify-between gap-4 mb-8">
+    <h1 class="editorial text-3xl md:text-4xl">My account</h1>
+    <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="text-sm underline underline-offset-4">Sign out</button></form>
+  </div>
+
+  <div class="grid md:grid-cols-[300px_1fr] gap-8">
+    <aside class="bg-[#f4f2eb] rounded-2xl p-6 h-fit">
+      <h2 class="font-bold mb-3">Personal information</h2>
+      <form method="post" action="{% url 'accounts:update_profile' %}" class="space-y-3 text-sm">
+        {% csrf_token %}
+        <input name="full_name" value="{{ profile.full_name }}" placeholder="Full name" class="w-full rounded-xl border border-[#bfc6b9] px-3 py-2">
+        <input name="email" value="{{ user.email }}" placeholder="Email" class="w-full rounded-xl border border-[#bfc6b9] px-3 py-2">
+        <input name="phone" value="{{ profile.phone }}" placeholder="Phone" class="w-full rounded-xl border border-[#bfc6b9] px-3 py-2">
+        <label class="flex items-center gap-2"><input type="checkbox" name="marketing_opt_in" {% if profile.marketing_opt_in %}checked{% endif %}> Receive updates</label>
+        <button class="btn-primary rounded-full px-5 py-2 font-semibold">Save</button>
+      </form>
+    </aside>
+
+    <div>
+      <h2 class="font-bold mb-3">Current orders</h2>
+      {% if current_orders %}
+        <div class="space-y-3 mb-8">
+          {% for o in current_orders %}
+          <a href="{% url 'orders:track' o.number %}" class="flex items-center justify-between gap-3 bg-[#f4f2eb] rounded-xl px-4 py-3">
+            <span class="font-semibold">{{ o.number }}</span>
+            <span class="text-sm text-[#636b61]">{{ o.created_at|date:'j M Y' }}</span>
+            <span class="text-sm rounded-full bg-[#e4ede4] text-[#2c3d2f] px-3 py-1">{{ o.get_status_display }}</span>
+            <span class="font-semibold">{{ o.currency }} {{ o.total|floatformat:0 }}</span>
+          </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-[#636b61] mb-8">You have no current orders. <a href="{% url 'storefront:shop' %}" class="underline underline-offset-4">Start shopping</a>.</p>
+      {% endif %}
+
+      <h2 class="font-bold mb-3">Order history</h2>
+      {% if order_history %}
+        <div class="space-y-3">
+          {% for o in order_history %}
+          <a href="{% url 'orders:track' o.number %}" class="flex items-center justify-between gap-3 bg-[#f4f2eb] rounded-xl px-4 py-3">
+            <span class="font-semibold">{{ o.number }}</span>
+            <span class="text-sm text-[#636b61]">{{ o.created_at|date:'j M Y' }}</span>
+            <span class="text-sm">{{ o.get_status_display }}</span>
+          </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-[#636b61]">No past orders yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

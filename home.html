@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="w-full bg-[#f0eee5]">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 min-h-[520px]">
+    <div class="px-6 md:px-12 lg:px-16 py-16 lg:py-24 flex flex-col justify-center">
+      <p class="uppercase tracking-[.25em] text-[#596951] text-xs font-bold mb-6">THE EVERYDAY EDIT</p>
+      <h1 class="editorial text-[#252a25] leading-[1.09] text-4xl md:text-5xl max-w-[650px] mb-6">{{ STORE_TAGLINE }}</h1>
+      <p class="text-[#565e54] leading-relaxed max-w-md mb-9">Discover carefully selected products for everyday living.</p>
+      <a href="{% url 'storefront:shop' %}" class="btn-primary inline-flex self-start items-center gap-3 rounded-full px-7 py-4 font-semibold transition">Explore Collection <i data-lucide="arrow-up-right" class="w-5"></i></a>
+    </div>
+    <div class="min-h-[320px] lg:min-h-full overflow-hidden">
+      <img loading="lazy" class="photo w-full h-full min-h-[320px] lg:min-h-[520px]" src="https://images.pexels.com/photos/6794583/pexels-photo-6794583.jpeg" alt="Minimalist arrangement of ceramic plates and bowls.">
+    </div>
+  </div>
+</section>
+
+{% if categories %}
+<section class="max-w-7xl mx-auto px-5 md:px-10 pt-16">
+  <div class="flex flex-wrap gap-3">
+    {% for c in categories %}
+      <a href="{% url 'storefront:shop' %}?category={{ c.slug }}" class="rounded-full border border-[#cfd3c6] px-5 py-2 text-sm hover:bg-[#eef0e8]">{{ c.name }}</a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section id="shop" class="max-w-7xl mx-auto px-5 md:px-10 py-16 md:py-20">
+  <div class="mb-10 flex items-end justify-between gap-4 flex-wrap">
+    <div>
+      <p class="uppercase tracking-[.22em] text-[#596951] text-xs font-bold mb-3">THE COLLECTION</p>
+      <h2 class="editorial text-3xl md:text-4xl mb-2">Featured Collection</h2>
+      <p class="text-[#636b61]">Explore our carefully selected products.</p>
+    </div>
+    <a href="{% url 'storefront:shop' %}" class="underline underline-offset-4 font-semibold text-sm">View all</a>
+  </div>
+  {% if featured %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+    {% for product in featured %}{% include 'storefront/_product_card.html' %}{% endfor %}
+  </div>
+  {% else %}
+  <div class="py-16 text-center text-[#636b61]">
+    <i data-lucide="package" class="mx-auto mb-3"></i>
+    <p>No products are available yet. Please check back soon.</p>
+  </div>
+  {% endif %}
+</section>
+
+<section id="about" class="bg-[#eaece4] py-16 md:py-24">
+  <div class="max-w-7xl mx-auto px-5 md:px-10">
+    <p class="uppercase tracking-[.22em] text-[#596951] text-xs font-bold mb-3">SHOP WITH CLARITY</p>
+    <h2 class="editorial text-3xl md:text-4xl mb-10">A considered way to shop.</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="rounded-2xl bg-[#faf8f2] p-7"><i data-lucide="check-check" class="text-[#344c3a] mb-6"></i><h3 class="font-bold mb-3 text-lg">Carefully Selected</h3><p class="text-[#636b61] leading-relaxed text-sm">Products are carefully selected before being listed.</p></div>
+      <div class="rounded-2xl bg-[#faf8f2] p-7"><i data-lucide="file-text" class="text-[#344c3a] mb-6"></i><h3 class="font-bold mb-3 text-lg">Clear Information</h3><p class="text-[#636b61] leading-relaxed text-sm">Product information is presented clearly and transparently.</p></div>
+      <div class="rounded-2xl bg-[#faf8f2] p-7"><i data-lucide="info" class="text-[#344c3a] mb-6"></i><h3 class="font-bold mb-3 text-lg">Responsible Shopping</h3><p class="text-[#636b61] leading-relaxed text-sm">Customers receive clear product and usage information.</p></div>
+      <div class="rounded-2xl bg-[#faf8f2] p-7"><i data-lucide="shield-check" class="text-[#344c3a] mb-6"></i><h3 class="font-bold mb-3 text-lg">Secure Checkout</h3><p class="text-[#636b61] leading-relaxed text-sm">Orders and payment proofs are handled securely and verified.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="support" class="max-w-7xl mx-auto px-5 md:px-10 py-16 md:py-24">
+  <p class="uppercase tracking-[.22em] text-[#596951] text-xs font-bold mb-3">HOW ORDERING WORKS</p>
+  <h2 class="editorial text-3xl md:text-4xl mb-10">Simple, transparent ordering.</h2>
+  <div class="grid md:grid-cols-4 gap-6">
+    <div><p class="editorial text-2xl text-[#344c3a] mb-2">01</p><p class="font-semibold mb-1">Browse & add to cart</p><p class="text-sm text-[#636b61]">Pick from in-stock products.</p></div>
+    <div><p class="editorial text-2xl text-[#344c3a] mb-2">02</p><p class="font-semibold mb-1">Submit your order</p><p class="text-sm text-[#636b61]">You receive payment instructions.</p></div>
+    <div><p class="editorial text-2xl text-[#344c3a] mb-2">03</p><p class="font-semibold mb-1">Upload payment proof</p><p class="text-sm text-[#636b61]">We verify your payment manually.</p></div>
+    <div><p class="editorial text-2xl text-[#344c3a] mb-2">04</p><p class="font-semibold mb-1">Fulfilment</p><p class="text-sm text-[#636b61]">We prepare your order for pickup or delivery.</p></div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Order {{ order.number }} — Payment instructions{% endblock %}
+{% block content %}
+<section class="max-w-3xl mx-auto px-5 md:px-10 py-12 md:py-16">
+  <div class="rounded-2xl bg-[#e4ede4] text-[#2c3d2f] px-6 py-5 mb-8">
+    <p class="font-bold">Your {{ STORE_NAME }} order has been received.</p>
+    <p class="text-sm">Order number <strong>{{ order.number }}</strong>. Keep this number to track your order.</p>
+  </div>
+
+  <h1 class="editorial text-2xl md:text-3xl mb-4">Payment instructions</h1>
+  {% with pm=order.payment_method %}
+  {% if pm %}
+  <div class="rounded-2xl bg-[#f4f2eb] p-6 mb-6">
+    <p class="font-bold mb-2">{{ pm.name }}</p>
+    {% if pm.instructions %}<p class="text-sm text-[#4c5349] leading-relaxed mb-3 whitespace-pre-line">{{ pm.instructions }}</p>{% endif %}
+    <dl class="text-sm space-y-1">
+      {% if pm.account_name %}<div><dt class="inline font-semibold">Account name:</dt> <dd class="inline">{{ pm.account_name }}</dd></div>{% endif %}
+      {% if pm.account_number %}<div><dt class="inline font-semibold">Account number:</dt> <dd class="inline">{{ pm.account_number }}</dd></div>{% endif %}
+      <div><dt class="inline font-semibold">Amount:</dt> <dd class="inline">{{ order.currency }} {{ order.total|floatformat:0 }}</dd></div>
+      {% if pm.reference_hint %}<div><dt class="inline font-semibold">Reference:</dt> <dd class="inline">{{ pm.reference_hint }}</dd></div>{% endif %}
+    </dl>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <h2 class="font-bold mb-3">Upload your payment proof</h2>
+  <p class="text-sm text-[#636b61] mb-4">After paying, upload a screenshot or document as proof. Our team verifies every payment manually — an uploaded file alone does not confirm payment.</p>
+  <form method="post" action="{% url 'orders:upload_proof' order.number %}" enctype="multipart/form-data" class="rounded-2xl bg-[#f4f2eb] p-6 space-y-3">
+    {% csrf_token %}
+    <input type="file" name="proof" accept=".jpg,.jpeg,.png,.webp,.pdf" required class="block w-full text-sm">
+    <input name="reference" placeholder="Transaction / reference number (optional)" class="w-full rounded-xl border border-[#bfc6b9] px-4 py-3">
+    <button class="btn-primary rounded-full px-7 py-3 font-semibold">Upload proof</button>
+  </form>
+
+  <div class="mt-6">
+    <a href="{% url 'orders:track' order.number %}" class="underline underline-offset-4 font-semibold">Track this order</a>
+  </div>
+</section>
+{% endblock %}

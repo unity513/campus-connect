@@ -1,0 +1,16 @@
+# Campus Connect e-commerce platform — Python dependencies (pinned)
+# Powered by LAVIDA.
+Django==6.1.1
+Pillow==11.3.0
+sqlparse==0.6.0
+
+# PostgreSQL / Supabase driver.
+# Required when SAVANA_DATABASE_URL / DATABASE_URL or SAVANA_POSTGRES_* is set
+# (e.g. a hosted Supabase Postgres database). Leave installed; it is a no-op
+# when running on the SQLite default.
+psycopg[binary]==3.2.3
+
+# Production extras (uncomment as needed for your deployment target)
+# gunicorn==23.0.0            # WSGI app server
+# whitenoise==6.8.2           # static file serving behind gunicorn
+# django-redis==5.4.0         # cache / rate-limit backend at scale

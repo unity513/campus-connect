@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}About — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-3xl mx-auto px-5 md:px-10 py-16">
+  <p class="uppercase tracking-[.22em] text-[#596951] text-xs font-bold mb-3">ABOUT {{ STORE_NAME }}</p>
+  <h1 class="editorial text-3xl md:text-4xl mb-6">{{ STORE_TAGLINE }}</h1>
+  <p class="text-[#4c5349] leading-relaxed mb-4">{{ STORE_NAME }} is a considered storefront for everyday products. Each item is carefully selected and listed with clear, transparent information so you can shop with confidence.</p>
+  <p class="text-[#4c5349] leading-relaxed">The {{ STORE_NAME }} platform is powered by <strong>LAVIDA</strong>, the technology provider behind the storefront, order management and secure payment-verification workflow.</p>
+</section>
+{% endblock %}

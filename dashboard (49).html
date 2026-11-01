@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Back office — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-7xl mx-auto px-5 md:px-10 py-10">
+  <h1 class="editorial text-3xl mb-6">Operations dashboard</h1>
+  {% include 'backoffice/_nav.html' %}
+
+  <form method="get" class="flex items-center gap-2 text-sm mb-6">
+    <label>Period:</label>
+    <select name="days" onchange="this.form.submit()" class="rounded-lg border border-[#bfc6b9] px-3 py-2">
+      {% for d in '7,30,90'|slice:':0' %}{% endfor %}
+      <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
+      <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 days</option>
+      <option value="90" {% if days == 90 %}selected{% endif %}>Last 90 days</option>
+    </select>
+  </form>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+    {% include 'backoffice/_stat.html' with label='Total orders' value=total_orders %}
+    {% include 'backoffice/_stat.html' with label='Pending payment' value=pending_payments %}
+    {% include 'backoffice/_stat.html' with label='Awaiting verification' value=awaiting_verification %}
+    {% include 'backoffice/_stat.html' with label='Confirmed' value=confirmed %}
+    {% include 'backoffice/_stat.html' with label='Processing' value=processing %}
+    {% include 'backoffice/_stat.html' with label='Completed' value=completed %}
+    {% include 'backoffice/_stat.html' with label='Cancelled' value=cancelled %}
+    {% include 'backoffice/_stat.html' with label='Products' value=total_products %}
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-8">
+    <div>
+      <h2 class="font-bold mb-3">Recent orders</h2>
+      <div class="space-y-2">
+        {% for o in recent_orders %}
+        <a href="{% url 'backoffice:order_detail' o.number %}" class="flex justify-between gap-2 bg-[#f4f2eb] rounded-xl px-4 py-3 text-sm">
+          <span class="font-semibold">{{ o.number }}</span><span>{{ o.contact_name }}</span>
+          <span class="rounded-full bg-[#e4ede4] text-[#2c3d2f] px-2">{{ o.get_status_display }}</span>
+          <span>{{ o.currency }} {{ o.total|floatformat:0 }}</span>
+        </a>
+        {% empty %}<p class="text-[#636b61] text-sm">No orders yet.</p>{% endfor %}
+      </div>
+    </div>
+    <div>
+      <h2 class="font-bold mb-3">Low stock</h2>
+      <div class="space-y-2">
+        {% for p in low_stock %}
+        <div class="flex justify-between gap-2 bg-[#f6efdc] text-[#6b5a1f] rounded-xl px-4 py-3 text-sm"><span>{{ p.name }}</span><span>{{ p.stock_quantity }} left</span></div>
+        {% empty %}<p class="text-[#636b61] text-sm">No low-stock products.</p>{% endfor %}
+      </div>
+      <h2 class="font-bold mb-3 mt-6">Recent payment proofs</h2>
+      <div class="space-y-2">
+        {% for pr in recent_proofs %}
+        <a href="{% url 'backoffice:order_detail' pr.order.number %}" class="flex justify-between gap-2 bg-[#f4f2eb] rounded-xl px-4 py-3 text-sm"><span>{{ pr.order.number }}</span><span>{{ pr.uploaded_at|date:'j M H:i' }}</span></a>
+        {% empty %}<p class="text-[#636b61] text-sm">No proofs uploaded yet.</p>{% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

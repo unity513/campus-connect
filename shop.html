@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Shop — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-7xl mx-auto px-5 md:px-10 py-12 md:py-16">
+  <h1 class="editorial text-3xl md:text-4xl mb-6">Shop</h1>
+
+  <form method="get" class="grid gap-3 md:grid-cols-[1fr_auto_auto] md:items-end mb-8">
+    <div>
+      <label for="q" class="sr-only">Search</label>
+      <input id="q" name="q" type="search" value="{{ q }}" placeholder="Search the collection" class="w-full rounded-xl border border-[#bfc6b9] bg-white px-4 py-3">
+    </div>
+    <div>
+      <label for="category" class="sr-only">Category</label>
+      <select id="category" name="category" class="rounded-xl border border-[#bfc6b9] bg-white px-4 py-3 w-full">
+        <option value="">All categories</option>
+        {% for c in categories %}<option value="{{ c.slug }}" {% if c.slug == active_category %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="flex gap-3">
+      <select name="sort" class="rounded-xl border border-[#bfc6b9] bg-white px-4 py-3">
+        <option value="featured" {% if sort == 'featured' %}selected{% endif %}>Featured</option>
+        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
+        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: low to high</option>
+        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: high to low</option>
+        <option value="name" {% if sort == 'name' %}selected{% endif %}>Name</option>
+      </select>
+      <button class="btn-primary rounded-xl px-5 py-3 font-semibold">Apply</button>
+    </div>
+  </form>
+
+  <p class="text-sm text-[#636b61] mb-6">{{ total }} product{{ total|pluralize }}{% if q %} for “{{ q }}”{% endif %}.</p>
+
+  {% if page_obj %}
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+    {% for product in page_obj %}{% include 'storefront/_product_card.html' %}{% endfor %}
+  </div>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+  <div class="flex justify-center gap-2 mt-10">
+    {% if page_obj.has_previous %}<a href="?{% if q %}q={{ q }}&{% endif %}{% if active_category %}category={{ active_category }}&{% endif %}sort={{ sort }}&page={{ page_obj.previous_page_number }}" class="px-4 py-2 rounded-lg border border-[#cfd3c6]">Previous</a>{% endif %}
+    <span class="px-4 py-2">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?{% if q %}q={{ q }}&{% endif %}{% if active_category %}category={{ active_category }}&{% endif %}sort={{ sort }}&page={{ page_obj.next_page_number }}" class="px-4 py-2 rounded-lg border border-[#cfd3c6]">Next</a>{% endif %}
+  </div>
+  {% endif %}
+  {% else %}
+  <div class="py-20 text-center text-[#636b61]">
+    <i data-lucide="search-x" class="mx-auto mb-3"></i>
+    <p>No products match your search. Try another word or clear the filters.</p>
+    <a href="{% url 'storefront:shop' %}" class="inline-block mt-4 underline underline-offset-4 font-semibold">Clear filters</a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

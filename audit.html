@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Audit log — Back office{% endblock %}
+{% block content %}
+<section class="max-w-5xl mx-auto px-5 md:px-10 py-10">
+  <h1 class="editorial text-3xl mb-6">Audit log</h1>
+  {% include 'backoffice/_nav.html' %}
+  <div class="space-y-2">
+    {% for e in entries %}
+    <div class="bg-[#f4f2eb] rounded-xl px-4 py-3 text-sm flex justify-between gap-3">
+      <span><strong>{{ e.action }}</strong> {{ e.object_type }} {{ e.object_id }}</span>
+      <span class="text-[#636b61]">{{ e.user|default:'system' }}</span>
+      <span class="text-[#636b61]">{{ e.created_at|date:'j M Y H:i' }}</span>
+    </div>
+    {% empty %}<p class="text-[#636b61]">No audit entries yet.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

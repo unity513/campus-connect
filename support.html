@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}How ordering works — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-3xl mx-auto px-5 md:px-10 py-16">
+  <h1 class="editorial text-3xl md:text-4xl mb-8">How ordering works</h1>
+  <ol class="space-y-6">
+    <li><p class="font-semibold">1. Add products to your cart</p><p class="text-sm text-[#636b61]">Only in-stock, available products can be ordered.</p></li>
+    <li><p class="font-semibold">2. Submit your order</p><p class="text-sm text-[#636b61]">You will receive an order number (e.g. CC-000001) and payment instructions.</p></li>
+    <li><p class="font-semibold">3. Pay and upload proof</p><p class="text-sm text-[#636b61]">Pay using an approved method, then upload your payment proof.</p></li>
+    <li><p class="font-semibold">4. Verification</p><p class="text-sm text-[#636b61]">Our team manually verifies every payment. An uploaded screenshot alone does not confirm payment.</p></li>
+    <li><p class="font-semibold">5. Fulfilment</p><p class="text-sm text-[#636b61]">Once confirmed, your order is processed and prepared for pickup or delivery.</p></li>
+  </ol>
+  <div class="mt-10 rounded-2xl bg-[#eaece4] p-6">
+    <p class="font-semibold mb-2">Track your order</p>
+    <form method="get" action="{% url 'orders:track_lookup' %}" class="flex gap-3">
+      <input name="number" placeholder="CC-000001" class="flex-1 rounded-xl border border-[#bfc6b9] bg-white px-4 py-3">
+      <button class="btn-primary rounded-xl px-5 py-3 font-semibold">Track</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

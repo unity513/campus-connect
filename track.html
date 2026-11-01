@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Order {{ order.number }}{% endblock %}
+{% block content %}
+<section class="max-w-3xl mx-auto px-5 md:px-10 py-12 md:py-16">
+  <h1 class="editorial text-3xl md:text-4xl mb-2">Order {{ order.number }}</h1>
+  <p class="text-[#636b61] mb-8">Placed {{ order.created_at|date:'j M Y, H:i' }}</p>
+
+  {% if order.status == 'rejected' %}
+    <div class="rounded-xl bg-[#f6e3e0] text-[#7a2b22] px-4 py-3 mb-6"><strong>Payment rejected.</strong> {{ order.payment.rejection_reason }}</div>
+  {% elif order.status == 'cancelled' %}
+    <div class="rounded-xl bg-[#eceee6] text-[#5a6155] px-4 py-3 mb-6">This order was cancelled.</div>
+  {% endif %}
+
+  <div class="grid md:grid-cols-2 gap-8">
+    <div>
+      <h2 class="font-bold mb-3">Progress</h2>
+      <p class="inline-block rounded-full bg-[#e4ede4] text-[#2c3d2f] px-3 py-1 text-sm mb-4">{{ order.get_status_display }}</p>
+      {% include 'orders/_status_tracker.html' %}
+    </div>
+    <div>
+      <h2 class="font-bold mb-3">Items</h2>
+      <div class="space-y-2 text-sm">
+        {% for item in order.items.all %}
+        <div class="flex justify-between gap-2"><span>{{ item.quantity }} × {{ item.product_name }}</span><span>{{ order.currency }} {{ item.line_total|floatformat:0 }}</span></div>
+        {% endfor %}
+      </div>
+      <div class="border-t border-[#deded3] mt-3 pt-3 text-sm space-y-1">
+        <div class="flex justify-between"><span>Subtotal</span><span>{{ order.currency }} {{ order.subtotal|floatformat:0 }}</span></div>
+        <div class="flex justify-between"><span>Delivery</span><span>{{ order.currency }} {{ order.delivery_fee|floatformat:0 }}</span></div>
+        <div class="flex justify-between font-bold"><span>Total</span><span>{{ order.currency }} {{ order.total|floatformat:0 }}</span></div>
+      </div>
+      <div class="mt-4 text-sm text-[#636b61]">
+        <p>Payment: {{ order.payment_method.name|default:'—' }} ({{ order.payment.get_status_display }})</p>
+        <p>Fulfilment: {{ order.fulfilment_method.name|default:'—' }}</p>
+      </div>
+      {% if order.proofs.exists %}
+        <p class="text-sm text-[#406149] mt-3"><i data-lucide="check" class="inline w-4"></i> Payment proof uploaded.</p>
+      {% elif order.status == 'payment_pending' %}
+        <a href="{% url 'orders:instructions' order.number %}" class="inline-block mt-3 underline underline-offset-4 font-semibold text-sm">Upload payment proof</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

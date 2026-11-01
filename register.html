@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Create account — {{ STORE_NAME }}{% endblock %}
+{% block content %}
+<section class="max-w-md mx-auto px-5 py-16">
+  <h1 class="editorial text-3xl mb-6">Create your account</h1>
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    {% for field in form %}
+      <div>
+        <label class="text-sm font-semibold">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<p class="text-xs text-[#7a2b22] mt-1">{{ field.errors|striptags }}</p>{% endif %}
+        {% if field.help_text %}<p class="text-xs text-[#636b61] mt-1">{{ field.help_text|safe }}</p>{% endif %}
+      </div>
+    {% endfor %}
+    <button class="btn-primary w-full rounded-full py-3 font-semibold">Create account</button>
+  </form>
+  <p class="text-sm text-[#636b61] mt-4">Already have an account? <a href="{% url 'accounts:login' %}" class="underline underline-offset-4 font-semibold">Sign in</a></p>
+</section>
+{% endblock %}
+{% block scripts %}<style>input{width:100%;border:1px solid #bfc6b9;border-radius:12px;padding:12px 16px;margin-top:4px}</style>{% endblock %}

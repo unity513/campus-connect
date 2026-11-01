@@ -1,0 +1,124 @@
+{% load humanize %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ STORE_NAME }} — {{ STORE_TAGLINE }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ STORE_TAGLINE }} Discover carefully selected products for everyday living from {{ STORE_NAME }}.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}{{ STORE_NAME }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ STORE_TAGLINE }}{% endblock %}">
+  <meta property="og:type" content="website">
+  {% block og_extra %}{% endblock %}
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23344c3a'/><text x='16' y='22' font-size='16' font-family='serif' fill='%23faf8f2' text-anchor='middle'>C</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root{--ink:#252a25;--cream:#faf8f2;--green:#344c3a;--line:#deded3;--muted:#636b61}
+    html{scroll-behavior:smooth}
+    body{font-family:"DM Sans",sans-serif;color:var(--ink);background:var(--cream);margin:0}
+    .editorial{font-family:"Fraunces",serif}
+    .wordmark{letter-spacing:.28em;font-weight:700}
+    .photo{object-fit:cover;background:#e9e7dc}
+    .soft-shadow{box-shadow:0 18px 55px rgba(36,42,34,.09)}
+    a{text-decoration:none}
+    .btn-primary{background:var(--green);color:#fff}
+    .btn-primary:hover{background:#263c2c}
+    .step{border-left:2px solid var(--line);padding:0 0 20px 22px;position:relative;color:var(--muted)}
+    .step:before{content:"";position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:#cfcec3}
+    .step.done{border-color:var(--green);color:var(--ink)}
+    .step.done:before,.step.current:before{background:var(--green)}
+    .step.current{font-weight:700;color:var(--green)}
+    .step:last-child{border-color:transparent;padding-bottom:0}
+    [x-cloak]{display:none}
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <header class="sticky top-0 z-40 border-b border-[#deded3] bg-[#faf8f2]/95 backdrop-blur">
+    <div class="w-full max-w-7xl mx-auto px-5 md:px-10 h-[72px] flex items-center justify-between gap-4">
+      <a href="{% url 'storefront:home' %}" class="wordmark text-[#252a25] text-[20px]">{{ STORE_NAME }}</a>
+      <nav aria-label="Main navigation" class="hidden md:flex gap-9 items-center text-[15px]">
+        <a href="{% url 'storefront:home' %}" class="hover:underline">Home</a>
+        <a href="{% url 'storefront:shop' %}" class="hover:underline">Shop</a>
+        <a href="{% url 'storefront:about' %}" class="hover:underline">About</a>
+        <a href="{% url 'storefront:support' %}" class="hover:underline">Support</a>
+        <a href="{% url 'orders:track_lookup' %}" class="hover:underline">Track order</a>
+      </nav>
+      <div class="flex items-center gap-1">
+        {% if user.is_authenticated %}
+          <a href="{% url 'accounts:dashboard' %}" class="p-3 rounded-full hover:bg-[#ebeee7]" aria-label="Account"><i data-lucide="user"></i></a>
+          {% if user.is_staff %}<a href="{% url 'backoffice:dashboard' %}" class="hidden sm:inline text-sm px-3 py-2 rounded-full hover:bg-[#ebeee7]">Back office</a>{% endif %}
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="p-3 rounded-full hover:bg-[#ebeee7]" aria-label="Sign in"><i data-lucide="user"></i></a>
+        {% endif %}
+        <a href="{% url 'storefront:cart' %}" class="p-3 rounded-full hover:bg-[#ebeee7] relative" aria-label="Cart">
+          <i data-lucide="shopping-bag"></i>
+          <span class="absolute -top-0.5 -right-0.5 bg-[#344c3a] text-white rounded-full min-w-5 h-5 text-xs flex items-center justify-center px-1">{{ cart_count }}</span>
+        </a>
+        <button id="menu-toggle" class="md:hidden p-3 rounded-full hover:bg-[#ebeee7]" aria-label="Menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+    <nav id="mobile-menu" hidden class="md:hidden border-t border-[#deded3] px-5 py-2 bg-[#faf8f2]">
+      <a href="{% url 'storefront:home' %}" class="block py-3">Home</a>
+      <a href="{% url 'storefront:shop' %}" class="block py-3">Shop</a>
+      <a href="{% url 'storefront:about' %}" class="block py-3">About</a>
+      <a href="{% url 'storefront:support' %}" class="block py-3">Support</a>
+      <a href="{% url 'orders:track_lookup' %}" class="block py-3">Track order</a>
+    </nav>
+  </header>
+
+  {% if messages %}
+  <div class="max-w-7xl mx-auto w-full px-5 md:px-10 mt-4 space-y-2">
+    {% for m in messages %}
+      <div class="rounded-xl px-4 py-3 text-sm {% if m.tags == 'error' %}bg-[#f6e3e0] text-[#7a2b22]{% elif m.tags == 'warning' %}bg-[#f6efdc] text-[#6b5a1f]{% else %}bg-[#e4ede4] text-[#2c3d2f]{% endif %}">{{ m }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main class="flex-1">{% block content %}{% endblock %}</main>
+
+  <footer class="border-t border-[#deded3] bg-[#eaece4] mt-16">
+    <div class="max-w-7xl mx-auto px-5 md:px-10 py-12 grid gap-8 md:grid-cols-4">
+      <div>
+        <p class="wordmark text-[18px] mb-3">{{ STORE_NAME }}</p>
+        <p class="text-[#636b61] text-sm leading-relaxed">{{ STORE_TAGLINE }}</p>
+      </div>
+      <div>
+        <p class="font-bold mb-3 text-sm">Shop</p>
+        <ul class="text-sm text-[#636b61] space-y-2">
+          <li><a href="{% url 'storefront:shop' %}" class="hover:underline">All products</a></li>
+          <li><a href="{% url 'storefront:cart' %}" class="hover:underline">Cart</a></li>
+          <li><a href="{% url 'orders:track_lookup' %}" class="hover:underline">Track an order</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-bold mb-3 text-sm">Information</p>
+        <ul class="text-sm text-[#636b61] space-y-2">
+          <li><a href="{% url 'storefront:about' %}" class="hover:underline">About {{ STORE_NAME }}</a></li>
+          <li><a href="{% url 'storefront:support' %}" class="hover:underline">How ordering works</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-bold mb-3 text-sm">Contact</p>
+        <ul class="text-sm text-[#636b61] space-y-2">
+          {% if STORE_CONTACT.email %}<li>{{ STORE_CONTACT.email }}</li>{% endif %}
+          {% if STORE_CONTACT.phone %}<li>{{ STORE_CONTACT.phone }}</li>{% endif %}
+          {% if STORE_CONTACT.hours %}<li>{{ STORE_CONTACT.hours }}</li>{% endif %}
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-[#d6d9cd] py-5 text-center text-xs text-[#8a8f85]">
+      &copy; {% now 'Y' %} {{ STORE_NAME }}. Powered by <span class="font-semibold">LAVIDA</span>.
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+    (function(){
+      var t=document.getElementById('menu-toggle'),m=document.getElementById('mobile-menu');
+      if(t&&m){t.addEventListener('click',function(){var h=m.hasAttribute('hidden');if(h){m.removeAttribute('hidden');t.setAttribute('aria-expanded','true');}else{m.setAttribute('hidden','');t.setAttribute('aria-expanded','false');}});}
+    })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

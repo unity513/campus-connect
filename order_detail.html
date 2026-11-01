@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}{{ order.number }} — Back office{% endblock %}
+{% block content %}
+<section class="max-w-5xl mx-auto px-5 md:px-10 py-10">
+  {% include 'backoffice/_nav.html' %}
+  <div class="flex items-center justify-between gap-3 mb-6">
+    <h1 class="editorial text-3xl">{{ order.number }}</h1>
+    <span class="rounded-full bg-[#e4ede4] text-[#2c3d2f] px-3 py-1 text-sm">{{ order.get_status_display }}</span>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-8">
+    <div class="space-y-6">
+      <div class="bg-[#f4f2eb] rounded-2xl p-5">
+        <h2 class="font-bold mb-2">Customer</h2>
+        <p class="text-sm">{{ order.contact_name }}</p>
+        <p class="text-sm text-[#636b61]">{{ order.contact_email }} · {{ order.contact_phone }}</p>
+        {% if order.delivery_snapshot %}<p class="text-sm text-[#636b61] mt-2">Delivery: {{ order.delivery_snapshot.line1 }}, {{ order.delivery_snapshot.city }}</p>{% endif %}
+        {% if order.pickup_location %}<p class="text-sm text-[#636b61] mt-2">Pickup: {{ order.pickup_location.name }}</p>{% endif %}
+      </div>
+
+      <div class="bg-[#f4f2eb] rounded-2xl p-5">
+        <h2 class="font-bold mb-2">Items</h2>
+        {% for item in items %}<div class="flex justify-between text-sm py-1"><span>{{ item.quantity }} × {{ item.product_name }} <span class="text-[#636b61]">({{ item.sku }})</span></span><span>{{ order.currency }} {{ item.line_total|floatformat:0 }}</span></div>{% endfor %}
+        <div class="border-t border-[#deded3] mt-2 pt-2 text-sm">
+          <div class="flex justify-between"><span>Subtotal</span><span>{{ order.currency }} {{ order.subtotal|floatformat:0 }}</span></div>
+          <div class="flex justify-between"><span>Delivery</span><span>{{ order.currency }} {{ order.delivery_fee|floatformat:0 }}</span></div>
+          <div class="flex justify-between font-bold"><span>Total</span><span>{{ order.currency }} {{ order.total|floatformat:0 }}</span></div>
+        </div>
+      </div>
+
+      <div class="bg-[#f4f2eb] rounded-2xl p-5">
+        <h2 class="font-bold mb-2">Payment proofs</h2>
+        {% for pr in proofs %}
+          <div class="flex justify-between items-center text-sm py-1">
+            <span>{{ pr.original_name }} <span class="text-[#636b61]">{{ pr.uploaded_at|date:'j M H:i' }}</span>{% if pr.reference %} · ref {{ pr.reference }}{% endif %}</span>
+            <a href="{% url 'orders:serve_proof' pr.pk %}" target="_blank" class="underline underline-offset-4">View</a>
+          </div>
+        {% empty %}<p class="text-sm text-[#636b61]">No proof uploaded yet.</p>{% endfor %}
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-[#f4f2eb] rounded-2xl p-5">
+        <h2 class="font-bold mb-2">Payment</h2>
+        <p class="text-sm">Method: {{ order.payment_method.name|default:'—' }}</p>
+        <p class="text-sm">Status: {{ order.payment.get_status_display }}</p>
+        {% if order.payment.rejection_reason %}<p class="text-sm text-[#7a2b22]">Reason: {{ order.payment.rejection_reason }}</p>{% endif %}
+
+        {% if order.payment.status == 'verification' or order.payment.status == 'pending' %}
+        <div class="mt-4 space-y-3">
+          {% if can_verify %}
+          <form method="post" action="{% url 'backoffice:order_action' order.number %}" onsubmit="return confirm('Confirm this payment? Inventory will be committed.')">
+            {% csrf_token %}<input type="hidden" name="action" value="verify">
+            <button class="btn-primary w-full rounded-full py-2 font-semibold">Confirm payment</button>
+          </form>
+          {% endif %}
+          {% if can_reject %}
+          <form method="post" action="{% url 'backoffice:order_action' order.number %}" class="space-y-2">
+            {% csrf_token %}<input type="hidden" name="action" value="reject">
+            <input name="reason" placeholder="Rejection reason (required)" required class="w-full rounded-xl border border-[#bfc6b9] px-3 py-2 text-sm">
+            <button class="w-full rounded-full py-2 font-semibold bg-[#f6e3e0] text-[#7a2b22]">Reject payment</button>
+          </form>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+
+      {% if can_fulfil %}
+      <div class="bg-[#f4f2eb] rounded-2xl p-5">
+        <h2 class="font-bold mb-2">Fulfilment</h2>
+        <form method="post" action="{% url 'backoffice:order_action' order.number %}" class="flex gap-2">
+          {% csrf_token %}<input type="hidden" name="action" value="fulfil">
+          <select name="to_status" class="flex-1 rounded-xl border border-[#bfc6b9] px-3 py-2 text-sm">
+            {% for key,label in fulfil_choices %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
+          </select>
+          <button class="btn-primary rounded-full px-4 py-2 font-semibold text-sm">Update</button>
+        </form>
+      </div>
+      {% endif %}
+
+      <div class="bg-[#f4f2eb] rounded-2xl p-5">
+        <h2 class="font-bold mb-2">Internal notes</h2>
+        {% if order.internal_notes %}<p class="text-sm text-[#4c5349] whitespace-pre-line mb-3">{{ order.internal_notes }}</p>{% endif %}
+        <form method="post" action="{% url 'backoffice:order_action' order.number %}" class="space-y-2">
+          {% csrf_token %}<input type="hidden" name="action" value="note">
+          <textarea name="note" rows="2" placeholder="Add a note" class="w-full rounded-xl border border-[#bfc6b9] px-3 py-2 text-sm"></textarea>
+          <button class="rounded-full px-4 py-2 font-semibold text-sm border border-[#cfd3c6]">Add note</button>
+        </form>
+      </div>
+
+      <div class="bg-[#f4f2eb] rounded-2xl p-5">
+        <h2 class="font-bold mb-2">Status history</h2>
+        <ul class="text-sm space-y-1">
+          {% for e in events %}<li class="text-[#4c5349]">{{ e.created_at|date:'j M H:i' }} — {{ e.get_to_status_display }} {% if e.changed_by %}<span class="text-[#636b61]">by {{ e.changed_by }}</span>{% endif %}</li>{% endfor %}
+        </ul>
+      </div>
+
+      <form method="post" action="{% url 'backoffice:order_action' order.number %}" onsubmit="return confirm('Cancel this order?')">
+        {% csrf_token %}<input type="hidden" name="action" value="cancel">
+        <input name="reason" placeholder="Cancellation reason" class="w-full rounded-xl border border-[#bfc6b9] px-3 py-2 text-sm mb-2">
+        <button class="text-sm text-[#7a2b22] underline underline-offset-4">Cancel order</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+<article class="rounded-2xl bg-[#f4f2eb] overflow-hidden flex flex-col">
+  <a href="{% url 'storefront:product' product.slug %}" class="block">
+    {% with img=product.primary_image %}
+      {% if img %}
+        <img loading="lazy" class="photo w-full aspect-[4/4.4]" src="{{ img }}" alt="{{ product.name }}">
+      {% else %}
+        <div class="photo w-full aspect-[4/4.4] flex items-center justify-center text-[#9aa093]"><i data-lucide="image"></i></div>
+      {% endif %}
+    {% endwith %}
+  </a>
+  <div class="p-5 flex flex-col flex-1">
+    <p class="text-xs font-bold uppercase tracking-widest mb-2 {% if product.in_stock %}text-[#406149]{% else %}text-[#9a5a4e]{% endif %}">{{ product.availability_label }}</p>
+    <h3 class="editorial text-[19px] mb-2"><a href="{% url 'storefront:product' product.slug %}">{{ product.name }}</a></h3>
+    <p class="text-[#636b61] text-sm leading-relaxed mb-4 flex-1">{{ product.short_description|default:'' }}</p>
+    <div class="flex items-center justify-between gap-2">
+      <span class="font-bold">
+        {% if product.on_sale %}<span class="line-through text-[#9aa093] text-sm mr-1">{{ product.currency }} {{ product.price|floatformat:0 }}</span>{% endif %}
+        {{ product.currency }} {{ product.effective_price|floatformat:0 }}
+      </span>
+      <a href="{% url 'storefront:product' product.slug %}" class="underline underline-offset-4 font-semibold text-sm py-2">View Product</a>
+    </div>
+  </div>
+</article>

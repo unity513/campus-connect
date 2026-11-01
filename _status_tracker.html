@@ -1,0 +1,5 @@
+<ol class="mt-2">
+  {% for key,label in order.progress_flow_labels %}
+  <li class="step {% if forloop.counter0 < order.progress_index %}done{% elif forloop.counter0 == order.progress_index %}current{% endif %}">{{ label }}</li>
+  {% endfor %}
+</ol>
