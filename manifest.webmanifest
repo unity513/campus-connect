@@ -1,0 +1,16 @@
+{
+  "name": "LAVIDA Connect",
+  "short_name": "LAVIDA Connect",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#061433",
+  "theme_color": "#061433",
+  "icons": [
+    {
+      "src": "./assets/lavida-notification-l-v2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
